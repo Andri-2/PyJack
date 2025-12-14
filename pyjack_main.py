@@ -12,7 +12,7 @@ KARTENWERTE = {
 
 GAME_LOG_FILE = "game_log.json"
 
-# Basisstruktur für den Log zur wiederverwendung im Code
+# Basisstruktur für den Log
 DEFAULT_LOG = {
     "spiele": [],
     "statistiken": {
@@ -25,17 +25,17 @@ DEFAULT_LOG = {
 
 
 def deck_erstellen():
-    # Erstellt ein Standard-Kartendeck mit 4 Farben und mischt es.
-    # Rückgabe: iste von Kartenkennzeichen (['A', '2'])
+    # Erstellt ein Standard-Kartendeck und mischt es.
+    # Rückgabe: Liste von Kartenkennzeichen (['A', '2'])
     deck = [karte for karte in KARTENWERTE.keys() for _ in range(4)]
     random.shuffle(deck)
     return deck
 
 
 def kartenwert_berechnen(hand):
-    punkte = 0
+    punkte = 0  # Sicherheitsaspekt, damit vor Berechnug Punkte = 0
     for karte in hand:
-        punkte += KARTENWERTE.get(karte, 0)
+        punkte += KARTENWERTE.get(karte, 0)  # Gibt den Kartenwert zurück
     # Asse bei Bedarf von 11 auf 1 reduzieren, wenn Punkte über 21
     anzahl_asse = hand.count('A')
     while punkte > 21 and anzahl_asse > 0:
@@ -100,11 +100,6 @@ def spieler_zug(hand, deck):
 
 def dealer_zug(hand, deck):
     # Der Dealer zieht so lange Karten, bis die Punktzahl ≥ 17 ist.
-
-    # Parameter:
-    # hand: Aktuelle Kartenliste des Dealers
-    # deck: Verbleibendes Kartendeck
-
     # Rückgabe:
     # Aktualisierte Kartenliste des Dealers
     while kartenwert_berechnen(hand) < 17:
@@ -136,7 +131,7 @@ def gewinner_ermitteln(spieler_punkte, dealer_punkte):
 
 
 def game_log_laden():
-    """Lädt game_log.json oder gibt eine Standardstruktur zurück."""
+    # Lädt game_log.json oder gibt eine Standardstruktur zurück.
     if not os.path.exists(GAME_LOG_FILE):
         # Rückgabe einer Kopie, damit der Aufrufer das Original nicht verändert
         return {
@@ -182,7 +177,6 @@ def game_log_laden():
 
 def game_log_speichern(log) -> None:
     # Speichert die Spielhistorie in game_log.json.
-
     # Parameter:
     # log: Dictionary mit Spielhistorie und Statistiken
     try:
@@ -243,7 +237,7 @@ def menu_spielhistorie_anzeigen():
     # Statistiken anzeigen
     # Sichere Abfrage
     stats = log.get("statistiken", DEFAULT_LOG["statistiken"])
-    print(f"\nGESAMTSTATISTIK:")
+    print(f"\nGesamtstatistik:")
     print(f"  Gesamt gespielte Spiele: {stats.get('spiele', 0)}")
     print(f"  Gewonnen (Spieler): {stats.get('gewonnen_spieler', 0)}")
     print(f"  Gewonnen (Dealer): {stats.get('gewonnen_dealer', 0)}")
@@ -254,7 +248,7 @@ def menu_spielhistorie_anzeigen():
     if spiele_liste:
         print(f"\nLETZTE {min(5, len(spiele_liste))} SPIELE:")
         print("-"*60)
-        # Zeige die letzten 5 Einträge
+        # Zeigt die letzten 5 Einträge
         for spiel in spiele_liste[-5:]:
 
             # Verwendung von.get() mit Standardwerten, um KeyErrors abzufangen
@@ -364,7 +358,7 @@ def spiel_durchfuehren():
     gewinner = gewinner_ermitteln(spieler_punkte, dealer_punkte)
 
     print("\n" + "="*50)
-    print("RUNDENERGEBNIS")
+    print("Runedenergebnis")
     print("="*50)
     spielzustand_anzeigen(spieler_hand, dealer_hand, dealer_verborgen=False)
 
